@@ -1,9 +1,11 @@
-import React, { useState,useEffect } from 'react';
-import './ProductList.css'
+import React, { useState, useEffect } from 'react';
+import './ProductList.css';
 import CartItem from './CartItem';
+
 function ProductList() {
-    const [showCart, setShowCart] = useState(false); 
-    const [showPlants, setShowPlants] = useState(false); // State to control the visibility of the About Us page
+    const [showCart, setShowCart] = useState(false);
+    const [addedToCart, setAddedToCart] = useState({});
+    const [showPlants, setShowPlants] = useState(false);
 
     const plantsArray = [
         {
@@ -181,100 +183,132 @@ function ProductList() {
                 },
                 {
                     name: "Pothos",
-                    image: "https://cdn.pixabay.com/photo/2018/11/15/10/32/plants-3816945_1280.jpg",
-                    description: "Tolerates neglect and can grow in various conditions.",
+                    image: "https://cdn.pixabay.com/photo/2019/06/04/17/37/pothos-4248369_1280.jpg",
+                    description: "A resilient plant that can survive in most environments.",
                     cost: "$10"
+                },
+                {
+                    name: "Succulent",
+                    image: "https://cdn.pixabay.com/photo/2021/06/23/06/52/succulent-6343122_1280.jpg",
+                    description: "Easy to care for, thrives in dry conditions.",
+                    cost: "$8"
+                },
+                {
+                    name: "Cactus",
+                    image: "https://cdn.pixabay.com/photo/2018/03/05/19/54/cactus-3200357_1280.jpg",
+                    description: "Requires little water and plenty of sunlight.",
+                    cost: "$7"
+                },
+                {
+                    name: "Spider Plant",
+                    image: "https://cdn.pixabay.com/photo/2018/07/11/06/47/chlorophytum-3530413_1280.jpg",
+                    description: "Low-maintenance, grows well with indirect light.",
+                    cost: "$12"
                 },
                 {
                     name: "Snake Plant",
                     image: "https://cdn.pixabay.com/photo/2021/01/22/06/04/snake-plant-5939187_1280.jpg",
-                    description: "Needs infrequent watering and is resilient to most pests.",
+                    description: "Hardy plant, thrives in low light and infrequent watering.",
                     cost: "$15"
-                },
-                {
-                    name: "Cast Iron Plant",
-                    image: "https://cdn.pixabay.com/photo/2017/02/16/18/04/cast-iron-plant-2072008_1280.jpg",
-                    description: "Hardy plant that tolerates low light and neglect.",
-                    cost: "$20"
-                },
-                {
-                    name: "Succulents",
-                    image: "https://cdn.pixabay.com/photo/2016/11/21/16/05/cacti-1846147_1280.jpg",
-                    description: "Drought-tolerant plants with unique shapes and colors.",
-                    cost: "$18"
-                },
-                {
-                    name: "Aglaonema",
-                    image: "https://cdn.pixabay.com/photo/2014/10/10/04/27/aglaonema-482915_1280.jpg",
-                    description: "Requires minimal care and adds color to indoor spaces.",
-                    cost: "$22"
                 }
             ]
         }
     ];
-   const styleObj={
-    backgroundColor: '#4CAF50',
-    color: '#fff!important',
-    padding: '15px',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignIems: 'center',
-    fontSize: '20px',
-   }
-   const styleObjUl={
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    width: '1100px',
-   }
-   const styleA={
-    color: 'white',
-    fontSize: '30px',
-    textDecoration: 'none',
-   }
-   const handleCartClick = (e) => {
-    e.preventDefault();
-    setShowCart(true); // Set showCart to true when cart icon is clicked
-};
-const handlePlantsClick = (e) => {
-    e.preventDefault();
-    setShowPlants(true); // Set showAboutUs to true when "About Us" link is clicked
-    setShowCart(false); // Hide the cart when navigating to About Us
-};
 
-   const handleContinueShopping = (e) => {
-    e.preventDefault();
-    setShowCart(false);
-  };
+    const styleObj = {
+        backgroundColor: '#4CAF50',
+        color: '#fff!important',
+        padding: '15px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignIems: 'center',
+        fontSize: '20px',
+    };
+
+    const styleObjUl = {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        width: '1100px',
+    };
+
+    const styleA = {
+        color: 'white',
+        fontSize: '30px',
+        textDecoration: 'none',
+    };
+
+    const handleCartClick = (e) => {
+        e.preventDefault();
+        setShowCart(true); // Set showCart to true when cart icon is clicked
+    };
+
+    const handlePlantsClick = (e) => {
+        e.preventDefault();
+        setShowPlants(true); // Set showAboutUs to true when "About Us" link is clicked
+        setShowCart(false); // Hide the cart when navigating to About Us
+    };
+
+    const handleContinueShopping = (e) => {
+        e.preventDefault();
+        setShowCart(false);
+    };
+
+    // Function to handle Add to Cart
+    const handleAddToCart = (plant) => {
+        setAddedToCart((prev) => ({
+            ...prev,
+            [plant.name]: true
+        }));
+    };
+
+    const handleCartToggle = () => {
+        setShowCart((prev) => !prev);
+    };
+
     return (
-        <div>
-             <div className="navbar" style={styleObj}>
-            <div className="tag">
-               <div className="luxury">
-               <img src="https://cdn.pixabay.com/photo/2020/08/05/13/12/eco-5465432_1280.png" alt="" />
-               <a href="/" style={{textDecoration:'none'}}>
-                        <div>
-                    <h3 style={{color:'white'}}>Paradise Nursery</h3>
-                    <i style={{color:'white'}}>Where Green Meets Serenity</i>
-                    </div>
-                    </a>
+        <div className="product-container">
+            <button onClick={handleCartToggle}>Toggle Cart</button>
+
+            {showCart && (
+                <div className="cart">
+                    <h2>Your Cart</h2>
+                    {Object.keys(addedToCart).length === 0 ? (
+                        <p>Your cart is empty.</p>
+                    ) : (
+                        Object.keys(addedToCart).map((plantName) => (
+                            <CartItem key={plantName} plantName={plantName} />
+                        ))
+                    )}
                 </div>
-              
-            </div>
-            <div style={styleObjUl}>
-                <div> <a href="#" onClick={(e)=>handlePlantsClick(e)} style={styleA}>Plants</a></div>
-                <div> <a href="#" onClick={(e) => handleCartClick(e)} style={styleA}><h1 className='cart'><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" id="IconChangeColor" height="68" width="68"><rect width="156" height="156" fill="none"></rect><circle cx="80" cy="216" r="12"></circle><circle cx="184" cy="216" r="12"></circle><path d="M42.3,72H221.7l-26.4,92.4A15.9,15.9,0,0,1,179.9,176H84.1a15.9,15.9,0,0,1-15.4-11.6L32.5,37.8A8,8,0,0,0,24.8,32H8" fill="none" stroke="#faf9f9" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" id="mainIconPathAttribute"></path></svg></h1></a></div>
+            )}
+
+            <div className="product-grid">
+                {plantsArray.map((category) => (
+                    <div key={category.category}>
+                        <h2>{category.category}</h2>
+                        <div className="plant-category">
+                            {category.plants.map((plant) => (
+                                <div key={plant.name} className="product-card">
+                                    <img src={plant.image} alt={plant.name} />
+                                    <h3>{plant.name}</h3>
+                                    <p>{plant.description}</p>
+                                    <p>{plant.cost}</p>
+                                    <button
+                                        onClick={() => handleAddToCart(plant)}
+                                        disabled={addedToCart[plant.name]}
+                                    >
+                                        {addedToCart[plant.name]
+                                            ? 'Added to Cart'
+                                            : 'Add to Cart'}
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                ))}
             </div>
         </div>
-        {!showCart? (
-        <div className="product-grid">
-
-
-        </div>
- ) :  (
-    <CartItem onContinueShopping={handleContinueShopping}/>
-)}
-    </div>
     );
 }
 
